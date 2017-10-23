@@ -22,9 +22,10 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             print("El cliente nos manda ", line.decode('utf-8'))
 
 if __name__ == "__main__":
-    # Listens at localhost ('') port 6001 
+    # Listens at localhost ('') port 6001
     # and calls the EchoHandler class to manage the request
-    serv = socketserver.UDPServer(('', 6001), EchoHandler) 
+    # print(self.client)
+    serv = socketserver.UDPServer(('', 6001), EchoHandler)
 
     print("Lanzando servidor UDP de eco...")
     try:
