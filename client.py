@@ -7,8 +7,16 @@ Programa cliente UDP que abre un socket a un servidor
 import socket
 import sys
 
+def sendRegister(server, port, sipmsg, my_socket, myaddr):
 
-def doClient(server, port, line):
+    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n\r\n"
+    # print("Enviando:", finalMsg)
+    my_socket.send(bytes(finalMsg, 'utf-8'))
+    data = my_socket.recv(1024)
+    print('Received: ', data.decode('utf-8'))
+
+
+def doClient(server, port, sipmsg, myaddr):
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         try:
@@ -17,11 +25,7 @@ def doClient(server, port, line):
         except socket.gaierror:
             sys.exit('Incorrect or not found server tuple')
 
-        print("Enviando:", line)
-        my_socket.send(bytes(line, 'utf-8') + b'\r\n')
-        data = my_socket.recv(1024)
-        print('Recibido -- ', data.decode('utf-8'))
-
+        sendRegister(server, port, sipmsg, my_socket, myaddr)
     print("Socket terminado.")
 
 
@@ -30,9 +34,10 @@ if __name__ == "__main__":
     try:
         SERVER = sys.argv[1]
         PORT = int(sys.argv[2])
-        LINE = ' '.join(sys.argv[3:])
+        SIPMSG = sys.argv[3]
+        MYADDR = ' '.join(sys.argv[4:])
 
     except(FileNotFoundError, IndexError):
         sys.exit('Usage: IP_ADDRESS PORT, STRING')
 
-    doClient(SERVER, PORT, LINE)
+    doClient(SERVER, PORT, SIPMSG, MYADDR)

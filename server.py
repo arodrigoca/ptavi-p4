@@ -12,6 +12,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     Echo server class
     """
 
+    usersList = []
+
     def handle(self):
         """
         handle method of the server class
@@ -20,9 +22,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
 
         print("Incoming client message from: ")
         print(self.client_address)
-        self.wfile.write(b"Hemos recibido tu peticion")
+        self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
         for line in self.rfile:
-            print("El cliente nos manda: ", line.decode('utf-8'))
+            stringMsg = line.decode('utf-8')
+            print("Client sent: ", stringMsg)
+            addrIndx = stringMsg.find(":")
+            break
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
