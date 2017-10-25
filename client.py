@@ -13,7 +13,8 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr):
     # print("Enviando:", finalMsg)
     my_socket.send(bytes(finalMsg, 'utf-8'))
     data = my_socket.recv(1024)
-    print('Received: ', data.decode('utf-8'))
+    print()
+    print('Received:', data.decode('utf-8'))
 
 
 def doClient(server, port, sipmsg, myaddr):
@@ -35,6 +36,7 @@ if __name__ == "__main__":
         SERVER = sys.argv[1]
         PORT = int(sys.argv[2])
         SIPMSG = sys.argv[3]
+        SIPMSG = SIPMSG.upper()
         MYADDR = ' '.join(sys.argv[4:])
 
     except(FileNotFoundError, IndexError):
