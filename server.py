@@ -5,6 +5,13 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 """
 
 import socketserver
+import json
+
+def register2json(info):
+
+    fileName = "registered.json"
+    with open(fileName, "w") as f:
+        json.dump(info, f)
 
 
 def registerUser(stringInfo, usersDict, handler):
@@ -18,6 +25,8 @@ def registerUser(stringInfo, usersDict, handler):
         print("User", user, "deleted")
     else:
         print("client", user, "registered")
+
+    register2json(usersDict)
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
