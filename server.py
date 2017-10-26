@@ -10,8 +10,14 @@ import socketserver
 def registerUser(stringInfo, usersDict, handler):
 
     addrStart = stringInfo[1].find(":") + 1
-    usersDict[stringInfo[1][addrStart:]] = handler.client_address
-    print("client", stringInfo[1][addrStart:], "registered")
+    user = stringInfo[1][addrStart:]
+    usersDict[user] = handler.client_address
+    expire_time = int(stringInfo[3])
+    if expire_time == 0:
+        del usersDict[user]
+        print("User", user, "deleted")
+    else:
+        print("client", user, "registered")
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):

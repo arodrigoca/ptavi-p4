@@ -7,9 +7,9 @@ Programa cliente UDP que abre un socket a un servidor
 import socket
 import sys
 
-def sendRegister(server, port, sipmsg, my_socket, myaddr):
+def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
 
-    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n\r\n"
+    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" + "Expires: " + str(myexp) + "\r\n\r\n"
     # print("Enviando:", finalMsg)
     my_socket.send(bytes(finalMsg, 'utf-8'))
     data = my_socket.recv(1024)
@@ -17,7 +17,7 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr):
     print('Received:', data.decode('utf-8'))
 
 
-def doClient(server, port, sipmsg, myaddr):
+def doClient(server, port, sipmsg, myaddr, myexp):
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         try:
@@ -26,7 +26,7 @@ def doClient(server, port, sipmsg, myaddr):
         except socket.gaierror:
             sys.exit('Incorrect or not found server tuple')
 
-        sendRegister(server, port, sipmsg, my_socket, myaddr)
+        sendRegister(server, port, sipmsg, my_socket, myaddr, myexp)
     print("Socket terminado.")
 
 
@@ -37,9 +37,10 @@ if __name__ == "__main__":
         PORT = int(sys.argv[2])
         SIPMSG = sys.argv[3]
         SIPMSG = SIPMSG.upper()
-        MYADDR = ' '.join(sys.argv[4:])
+        MYADDR = sys.argv[4]
+        MYEXP = int(sys.argv[5])
 
-    except(FileNotFoundError, IndexError):
-        sys.exit('Usage: IP_ADDRESS PORT, STRING')
+    except(FileNotFoundError, IndexError, ValueError):
+        sys.exit("Usage: client.py ip puerto register sip_address expires_value")
 
-    doClient(SERVER, PORT, SIPMSG, MYADDR)
+    doClient(SERVER, PORT, SIPMSG, MYADDR, MYEXP)
