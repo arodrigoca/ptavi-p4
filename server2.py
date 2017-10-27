@@ -7,32 +7,44 @@ Clase (y programa principal) para un servidor de eco en UDP simple
 import socketserver
 import json
 import time
+import sched
 
 
-def register2json(usersDict, expire_time, user):
+def register2json(usersDict):
 
-    tiempo = time()
     fileName = "registered.json"
-    diccionario = {"address": usersDict[user], "expires": tiempo}
-    lista = [user, usersDict[user]]
-    print(lista)
     with open(fileName, "w+") as f:
-        json.dump(usersDict, f)
+        json.dump(usersDict, f, sort_keys=True, indent=4)
+
+
+def schedDelete(usersDict, user):
+
+    # del usersDict[user]
+    # register2json(usersDict)
+    print("hola")
 
 
 def registerUser(stringInfo, usersDict, handler):
 
+    s = sched.scheduler(time.time, time.sleep)
     addrStart = stringInfo[1].find(":") + 1
     user = stringInfo[1][addrStart:]
-    usersDict[user] = handler.client_address
-    expire_time = int(stringInfo[3])
+    expire_time = time.strftime('%Y-%m-%d %H:%M:%S',
+        time.gmtime(time.time() + int(stringInfo[3])))
+
+    tagsDictionary = {"address": handler.client_address,
+        "expires": expire_time}
+
+    usersDict[user] = tagsDictionary
     if expire_time == 0:
         del usersDict[user]
         print("User", user, "deleted")
     else:
+        s.enter(int(stringInfo[3]), 1, schedDelete(usersDict, user))
         print("client", user, "registered")
 
-    register2json(usersDict, expire_time, user)
+    print(usersDict)
+    register2json(usersDict)
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
@@ -61,7 +73,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
         except Exception as e:
                 self.wfile.write(b"SIP/2.0 500 Server Internal Error\r\n\r\n")
-                print(e)
+                print("Server error:", e)
 
 
 if __name__ == "__main__":
@@ -69,7 +81,6 @@ if __name__ == "__main__":
     # and calls the EchoHandler class to manage the request
 
     serv = socketserver.UDPServer(('', 6001), SIPRegisterHandler)
-
     print("Lanzando servidor UDP de eco...")
     try:
         serv.serve_forever()
