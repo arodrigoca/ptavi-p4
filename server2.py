@@ -8,6 +8,10 @@ import socketserver
 import json
 import time
 import sched
+import _thread
+import threading
+
+scheduler = sched.scheduler(time.time, time.sleep)
 
 
 def register2json(usersDict):
@@ -17,16 +21,20 @@ def register2json(usersDict):
         json.dump(usersDict, f, sort_keys=True, indent=4)
 
 
-def schedDelete(usersDict, user):
+def deleteUser(usersDict, user):
 
-    # del usersDict[user]
-    # register2json(usersDict)
-    print("hola")
+    del usersDict[user]
+    print("User", user, "deleted")
+
+
+def schedDelete(usersDict, user, delay):
+
+    scheduler.enter(delay, 1, deleteUser, (usersDict, user))
+    scheduler.run()
 
 
 def registerUser(stringInfo, usersDict, handler):
 
-    s = sched.scheduler(time.time, time.sleep)
     addrStart = stringInfo[1].find(":") + 1
     user = stringInfo[1][addrStart:]
     expire_time = time.strftime('%Y-%m-%d %H:%M:%S',
@@ -36,14 +44,12 @@ def registerUser(stringInfo, usersDict, handler):
         "expires": expire_time}
 
     usersDict[user] = tagsDictionary
-    if expire_time == 0:
-        del usersDict[user]
-        print("User", user, "deleted")
+    if int(stringInfo[3]) == 0:
+        deleteUser(usersDict, user)
     else:
-        s.enter(int(stringInfo[3]), 1, schedDelete(usersDict, user))
         print("client", user, "registered")
 
-    print(usersDict)
+    _thread.start_new_thread(schedDelete, (usersDict, user, int(stringInfo[3])))
     register2json(usersDict)
 
 
