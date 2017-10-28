@@ -21,15 +21,31 @@ def register2json(usersDict):
         json.dump(usersDict, f, sort_keys=True, indent=4)
 
 
+def json2registered(SIPHandler):
+
+    try:
+        with open("registered.json", "r+") as f:
+            initDict = json.load(f)
+            SIPHandler.usersDict = initDict
+            for user in SIPHandler.usersDict:
+                _thread.start_new_thread(schedDelete, (SIPHandler.usersDict, user, SIPHandler.usersDict[user]["timeout"]))
+    except FileNotFoundError:
+            print("json file not found")
+
+
 def deleteUser(usersDict, user):
 
-    del usersDict[user]
-    print("User", user, "deleted")
+    try:
+        del usersDict[user]
+        print("User", user, "deleted")
+        register2json(usersDict)
 
+    except KeyError:
+        print("No entry for", user)
 
 def schedDelete(usersDict, user, delay):
 
-    scheduler.enter(delay, 1, deleteUser, (usersDict, user))
+    scheduler.enterabs(time.time() + delay, 1, deleteUser, (usersDict, user))
     scheduler.run()
 
 
@@ -41,7 +57,7 @@ def registerUser(stringInfo, usersDict, handler):
         time.gmtime(time.time() + int(stringInfo[3])))
 
     tagsDictionary = {"address": handler.client_address,
-        "expires": expire_time}
+        "expires": expire_time, "timeout": int(stringInfo[3])}
 
     usersDict[user] = tagsDictionary
     if int(stringInfo[3]) == 0:
@@ -89,6 +105,7 @@ if __name__ == "__main__":
     serv = socketserver.UDPServer(('', 6001), SIPRegisterHandler)
     print("Lanzando servidor UDP de eco...")
     try:
+        json2registered(SIPRegisterHandler)
         serv.serve_forever()
     except KeyboardInterrupt:
         print("Finalizado servidor")

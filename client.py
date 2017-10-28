@@ -12,7 +12,11 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
     finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" + "Expires: " + str(myexp) + "\r\n\r\n"
     # print("Enviando:", finalMsg)
     my_socket.send(bytes(finalMsg, 'utf-8'))
-    data = my_socket.recv(1024)
+    try:
+        data = my_socket.recv(1024)
+    except ConnectionRefusedError:
+        sys.exit("Incorrect or not found server tuple")
+
     print()
     print('Received:', data.decode('utf-8'))
 
