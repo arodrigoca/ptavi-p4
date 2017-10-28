@@ -9,7 +9,6 @@ import json
 import time
 import sched
 import _thread
-import threading
 
 scheduler = sched.scheduler(time.time, time.sleep)
 
@@ -28,7 +27,8 @@ def json2registered(SIPHandler):
             initDict = json.load(f)
             SIPHandler.usersDict = initDict
             for user in SIPHandler.usersDict:
-                _thread.start_new_thread(schedDelete, (SIPHandler.usersDict, user, SIPHandler.usersDict[user]["timeout"]))
+                _thread.start_new_thread(schedDelete,
+                                         (SIPHandler.usersDict, user))
     except FileNotFoundError:
             print("json file not found")
 
@@ -37,16 +37,21 @@ def deleteUser(usersDict, user):
 
     try:
         del usersDict[user]
-        print("User", user, "deleted")
+        print("User", user, "deleted", "because its entry expired")
         register2json(usersDict)
 
     except KeyError:
         print("No entry for", user)
 
-def schedDelete(usersDict, user, delay):
 
-    scheduler.enterabs(time.time() + delay, 1, deleteUser, (usersDict, user))
-    scheduler.run()
+def schedDelete(usersDict, user):
+
+    try:
+        scheduler.enterabs(usersDict[user]["fromEpoch"], 1, deleteUser,
+                           (usersDict, user))
+        scheduler.run()
+    except KeyError:
+        pass
 
 
 def registerUser(stringInfo, usersDict, handler):
@@ -54,18 +59,19 @@ def registerUser(stringInfo, usersDict, handler):
     addrStart = stringInfo[1].find(":") + 1
     user = stringInfo[1][addrStart:]
     expire_time = time.strftime('%Y-%m-%d %H:%M:%S',
-        time.gmtime(time.time() + int(stringInfo[3])))
+                                time.gmtime(time.time() + int(stringInfo[3])))
 
     tagsDictionary = {"address": handler.client_address,
-        "expires": expire_time, "timeout": int(stringInfo[3])}
+                      "expires": expire_time,
+                      "fromEpoch": time.time() + int(stringInfo[3])}
 
     usersDict[user] = tagsDictionary
     if int(stringInfo[3]) == 0:
         deleteUser(usersDict, user)
     else:
-        print("client", user, "registered")
+        print("client", user, "registered", "for", int(stringInfo[3]), "seconds")
 
-    _thread.start_new_thread(schedDelete, (usersDict, user, int(stringInfo[3])))
+    _thread.start_new_thread(schedDelete, (usersDict, user))
     register2json(usersDict)
 
 
@@ -96,7 +102,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         except Exception as e:
                 self.wfile.write(b"SIP/2.0 500 Server Internal Error\r\n\r\n")
                 print("Server error:", e)
-
 
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
