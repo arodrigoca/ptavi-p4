@@ -7,9 +7,11 @@ Programa cliente UDP que abre un socket a un servidor
 import socket
 import sys
 
+
 def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
 
-    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" + "Expires: " + str(myexp) + "\r\n\r\n"
+    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +\
+     "Expires: " + str(myexp) + "\r\n\r\n"
     # print("Enviando:", finalMsg)
     my_socket.send(bytes(finalMsg, 'utf-8'))
     try:
@@ -45,6 +47,7 @@ if __name__ == "__main__":
         MYEXP = int(sys.argv[5])
 
     except(FileNotFoundError, IndexError, ValueError):
-        sys.exit("Usage: client.py ip puerto register sip_address expires_value")
+        sys.exit(
+                'Usage: client.py ip puerto register sip_address expires_value')
 
     doClient(SERVER, PORT, SIPMSG, MYADDR, MYEXP)

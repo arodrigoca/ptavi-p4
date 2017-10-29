@@ -13,32 +13,12 @@ import _thread
 scheduler = sched.scheduler(time.time, time.sleep)
 
 
-def register2json(usersDict):
-
-    fileName = "registered.json"
-    with open(fileName, "w+") as f:
-        json.dump(usersDict, f, sort_keys=True, indent=4)
-
-
-def json2registered(SIPHandler):
-
-    try:
-        with open("registered.json", "r+") as f:
-            initDict = json.load(f)
-            SIPHandler.usersDict = initDict
-            for user in SIPHandler.usersDict:
-                _thread.start_new_thread(schedDelete,
-                                         (SIPHandler.usersDict, user))
-    except FileNotFoundError:
-            print("json file not found")
-
-
 def deleteUser(usersDict, user):
 
     try:
         del usersDict[user]
         print("User", user, "deleted", "because its entry expired")
-        register2json(usersDict)
+        SIPRegisterHandler.register2json(usersDict)
 
     except KeyError:
         print("No entry for", user)
@@ -69,10 +49,11 @@ def registerUser(stringInfo, usersDict, handler):
     if int(stringInfo[3]) == 0:
         deleteUser(usersDict, user)
     else:
-        print("client", user, "registered", "for", int(stringInfo[3]), "seconds")
+        print("client", user, "registered", "for",
+              int(stringInfo[3]), "seconds")
 
     _thread.start_new_thread(schedDelete, (usersDict, user))
-    register2json(usersDict)
+    SIPRegisterHandler.register2json(usersDict)
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
@@ -88,10 +69,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         (all requests will be handled by this method)
         """
 
-        # print("Incoming client message from: ")
-        # print(self.client_address)
         stringMsg = self.rfile.read().decode('utf-8')
-        # print("Client sent: ", stringMsg)
         stringInfo = stringMsg.split(" ")
         try:
             if stringInfo[0] == 'REGISTER':
@@ -103,6 +81,28 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 self.wfile.write(b"SIP/2.0 500 Server Internal Error\r\n\r\n")
                 print("Server error:", e)
 
+    @classmethod
+    def register2json(self, usersDict):
+
+        fileName = "registered.json"
+        with open(fileName, "w+") as f:
+            json.dump(usersDict, f, sort_keys=True, indent=4)
+
+    @classmethod
+    def json2registered(self):
+
+        try:
+            with open("registered.json", "r+") as f:
+                print("Reading json file")
+                initDict = json.load(f)
+                self.usersDict = initDict
+                for user in self.usersDict:
+                    _thread.start_new_thread(schedDelete,
+                                             (self.usersDict, user))
+        except FileNotFoundError:
+            print("json file not found")
+
+
 if __name__ == "__main__":
     # Listens at localhost ('') port 6001
     # and calls the EchoHandler class to manage the request
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     serv = socketserver.UDPServer(('', 6001), SIPRegisterHandler)
     print("Lanzando servidor UDP de eco...")
     try:
-        json2registered(SIPRegisterHandler)
+        SIPRegisterHandler.json2registered()
         serv.serve_forever()
     except KeyboardInterrupt:
         print("Finalizado servidor")
