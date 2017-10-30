@@ -13,7 +13,7 @@ scheduler = sched.scheduler(time.time, time.sleep)
 
 
 def deleteUser(usersDict, user):
-    """This method deletes an user from the dictionary.
+    """DeleteUser method deletes an user from the dictionary.
 
     Arguments needed are (dictionary, userToDelete).
 
@@ -28,7 +28,7 @@ def deleteUser(usersDict, user):
 
 
 def schedDelete(usersDict, user):
-    """This method schedules an user deletion when his expire time arrives.
+    """schedDelete method schedules an user deletion when his expire time arrives.
 
     Arguments needed are (dictionary, userToDelete).
 
@@ -42,8 +42,7 @@ def schedDelete(usersDict, user):
 
 
 def registerUser(stringInfo, usersDict, handler):
-    """This method manages user registration and deletion when a REGISTER
-    SIP message arrives to the server.
+    """registerUser method manages user registration and deletion.
 
     Arguments needed are (stringReceived, dictionary).
 
@@ -78,9 +77,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     usersDict = {}
 
     def handle(self):
-        """
+        """Handle method of the server class.
 
-        Handle method of the server class
         (all requests will be handled by this method).
 
         """
@@ -98,7 +96,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
 
     @classmethod
     def register2json(self, usersDict):
-        """This method prints user dictionary to json file.
+        """register2json method prints user dictionary to json file.
 
         Arguments needed are (dictionary).
 
@@ -109,8 +107,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
 
     @classmethod
     def json2registered(self):
-        """This method reads a json file and saves
-         its conent to the given dict.
+        """json2registered method reads a json file and saves its content.
 
         Arguments needed are ().
 
