@@ -15,6 +15,7 @@ def deleteUser(usersDict, user):
     """
 
     This method deletes an user from the dictionary.
+
     Arguments needed are (dictionary, userToDelete).
 
     """
@@ -31,6 +32,7 @@ def schedDelete(usersDict, user):
     """
 
     This method schedules an user deletion when his expire time arrives.
+
     Arguments needed are (dictionary, userToDelete).
 
     """
@@ -79,7 +81,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     def handle(self):
         """
 
-        handle method of the server class
+        Handle method of the server class
         (all requests will be handled by this method).
 
         """
@@ -100,6 +102,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         """
 
         This method prints user dictionary to json file.
+
         Arguments needed are (dictionary).
 
         """
@@ -112,6 +115,7 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         """
 
         This method reads a json file and saves its conent to the given dict.
+
         Arguments needed are ().
 
         """

@@ -9,6 +9,7 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
     """
 
     This method sends a SIP REGISTER message when called.
+
     Arguments needed are (serverIP, serverPort, sipMessage,
     clientAddress, clientExpire).
 
@@ -30,9 +31,10 @@ def doClient(server, port, sipmsg, myaddr, myexp):
 
     This method is called at execution. It creates an ip address for
     the client and calls register function too.
+
     Arguments needed are (serverIP, serverPort, sipMessage,
     clientAddress, clientExpire).
-    
+
     """
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         try:
