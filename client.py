@@ -9,9 +9,14 @@ import sys
 
 
 def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
+    """
+    This method sends a SIP REGISTER message when called.
+    Arguments needed are (serverIP, serverPort, sipMessage,
+    clientAddress, clientExpire)
+    """
 
-    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +\
-     "Expires: " + str(myexp) + "\r\n\r\n"
+    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +
+    "Expires: " + str(myexp) + "\r\n\r\n"
     my_socket.send(bytes(finalMsg, 'utf-8'))
     try:
         data = my_socket.recv(1024)
@@ -23,6 +28,12 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
 
 
 def doClient(server, port, sipmsg, myaddr, myexp):
+    """
+    This method is called at execution. It creates an ip address for
+    the client and calls register function too.
+    Arguments needed are (serverIP, serverPort, sipMessage,
+    clientAddress, clientExpire)
+    """
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         try:
