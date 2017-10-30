@@ -12,7 +12,6 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
 
     finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +\
      "Expires: " + str(myexp) + "\r\n\r\n"
-    # print("Enviando:", finalMsg)
     my_socket.send(bytes(finalMsg, 'utf-8'))
     try:
         data = my_socket.recv(1024)
@@ -48,6 +47,7 @@ if __name__ == "__main__":
 
     except(FileNotFoundError, IndexError, ValueError):
         sys.exit(
-                'Usage: client.py ip puerto register sip_address expires_value')
+                'Usage: client.py ip puerto register ' +
+                'sip_address expires_value')
 
     doClient(SERVER, PORT, SIPMSG, MYADDR, MYEXP)
