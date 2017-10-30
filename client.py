@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Programa cliente UDP que abre un socket a un servidor
-"""
-
+"""UDP client program."""
 import socket
 import sys
 
@@ -12,9 +9,8 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
     """
     This method sends a SIP REGISTER message when called.
     Arguments needed are (serverIP, serverPort, sipMessage,
-    clientAddress, clientExpire)
+    clientAddress, clientExpire).
     """
-
     finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +
     "Expires: " + str(myexp) + "\r\n\r\n"
     my_socket.send(bytes(finalMsg, 'utf-8'))
@@ -34,7 +30,6 @@ def doClient(server, port, sipmsg, myaddr, myexp):
     Arguments needed are (serverIP, serverPort, sipMessage,
     clientAddress, clientExpire).
     """
-
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
         try:
             my_socket.connect((server, port))

@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple.
-"""
+"""Main class and program for a simple SIP server."""
 
 import socketserver
 import json
@@ -18,7 +16,6 @@ def deleteUser(usersDict, user):
     This method deletes an user from the dictionary.
     Arguments needed are (dictionary, userToDelete).
     """
-
     try:
         del usersDict[user]
         print("User", user, "deleted", "because its entry expired")
@@ -33,7 +30,6 @@ def schedDelete(usersDict, user):
     This method schedules an user deletion when his expire time arrives.
     Arguments needed are (dictionary, userToDelete).
     """
-
     try:
         scheduler.enterabs(usersDict[user]["fromEpoch"], 1, deleteUser,
                            (usersDict, user))
@@ -44,11 +40,11 @@ def schedDelete(usersDict, user):
 
 def registerUser(stringInfo, usersDict, handler):
     """
-    This method manages user registration and deletion when a REGISTER.
-    SIP message arrives to the server..
+    This method manages user registration and deletion when a REGISTER
+    SIP message arrives to the server.
+
     Arguments needed are (stringReceived, dictionary).
     """
-
     addrStart = stringInfo[1].find(":") + 1
     user = stringInfo[1][addrStart:]
     expire_time = time.strftime('%Y-%m-%d %H:%M:%S',
@@ -70,18 +66,15 @@ def registerUser(stringInfo, usersDict, handler):
 
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
-    """
-    Echo server class.
-    """
+    """Echo server class."""
 
     usersDict = {}
 
     def handle(self):
         """
-        handle method of the server class.
+        handle method of the server class
         (all requests will be handled by this method).
         """
-
         stringMsg = self.rfile.read().decode('utf-8')
         stringInfo = stringMsg.split(" ")
         try:
@@ -100,7 +93,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         This method prints user dictionary to json file.
         Arguments needed are (dictionary).
         """
-
         fileName = "registered.json"
         with open(fileName, "w+") as f:
             json.dump(usersDict, f, sort_keys=True, indent=4)
@@ -111,7 +103,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         This method reads a json file and saves its conent to the given dict.
         Arguments needed are ().
         """
-
         try:
             with open("registered.json", "r+") as f:
                 print("Reading json file")
