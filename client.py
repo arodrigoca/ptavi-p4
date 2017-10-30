@@ -12,8 +12,8 @@ def sendRegister(server, port, sipmsg, my_socket, myaddr, myexp):
     clientAddress, clientExpire).
 
     """
-    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n" +
-    "Expires: " + str(myexp) + "\r\n\r\n"
+    finalMsg = sipmsg + " " + "sip:" + myaddr + " " + "SIP/2.0\r\n"
+    finalMsg = finalMsg + "Expires: " + str(myexp) + "\r\n\r\n"
     my_socket.send(bytes(finalMsg, 'utf-8'))
     try:
         data = my_socket.recv(1024)
