@@ -7,6 +7,7 @@ import json
 import time
 import sched
 import _thread
+import sys
 
 scheduler = sched.scheduler(time.time, time.sleep)
 
@@ -130,10 +131,11 @@ if __name__ == "__main__":
     # Listens at localhost ('') port 6001
     # and calls the EchoHandler class to manage the request
 
-    serv = socketserver.UDPServer(('', 6001), SIPRegisterHandler)
     print("Lanzando servidor UDP de eco...")
     try:
+        serv = socketserver.UDPServer(('', int(sys.argv[1])),
+                                      SIPRegisterHandler)
         SIPRegisterHandler.json2registered()
         serv.serve_forever()
-    except KeyboardInterrupt:
-        print("Finalizado servidor")
+    except(KeyboardInterrupt, IndexError):
+        print("Ending server. Usage: port")
