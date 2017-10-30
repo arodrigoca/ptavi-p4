@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
-Clase (y programa principal) para un servidor de eco en UDP simple
+Clase (y programa principal) para un servidor de eco en UDP simple.
 """
 
 import socketserver
@@ -15,8 +15,8 @@ scheduler = sched.scheduler(time.time, time.sleep)
 
 def deleteUser(usersDict, user):
     """
-    This method deletes an user from the dictionary
-    Arguments needed are (dictionary, userToDelete)
+    This method deletes an user from the dictionary.
+    Arguments needed are (dictionary, userToDelete).
     """
 
     try:
@@ -30,8 +30,8 @@ def deleteUser(usersDict, user):
 
 def schedDelete(usersDict, user):
     """
-    This method schedules an user deletion when his expire time arrives
-    Arguments needed are (dictionary, userToDelete)
+    This method schedules an user deletion when his expire time arrives.
+    Arguments needed are (dictionary, userToDelete).
     """
 
     try:
@@ -44,9 +44,9 @@ def schedDelete(usersDict, user):
 
 def registerUser(stringInfo, usersDict, handler):
     """
-    This method manages user registration and deletion when a REGISTER
+    This method manages user registration and deletion when a REGISTER.
     SIP message arrives to the server..
-    Arguments needed are (stringReceived, dictionary)
+    Arguments needed are (stringReceived, dictionary).
     """
 
     addrStart = stringInfo[1].find(":") + 1
@@ -71,15 +71,15 @@ def registerUser(stringInfo, usersDict, handler):
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
-    Echo server class
+    Echo server class.
     """
 
     usersDict = {}
 
     def handle(self):
         """
-        handle method of the server class
-        (all requests will be handled by this method)
+        handle method of the server class.
+        (all requests will be handled by this method).
         """
 
         stringMsg = self.rfile.read().decode('utf-8')
@@ -97,8 +97,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     @classmethod
     def register2json(self, usersDict):
         """
-        This method prints user dictionary to json file
-        Arguments needed are (dictionary)
+        This method prints user dictionary to json file.
+        Arguments needed are (dictionary).
         """
 
         fileName = "registered.json"
@@ -108,9 +108,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     @classmethod
     def json2registered(self):
         """
-        This method reads a json file and saves its conent to the
-        given dictionary
-        Arguments needed are ()
+        This method reads a json file and saves its conent to the given dict.
+        Arguments needed are ().
         """
 
         try:
