@@ -46,6 +46,10 @@ def registerUser(stringInfo, usersDict, handler):
 
     Arguments needed are (stringReceived, dictionary).
 
+    This method also contains a thread call. For each user in your user
+    dictionary, it call the second thread and schedules an user deletion
+    with schedDelete function.
+
     """
     addrStart = stringInfo[1].find(":") + 1
     user = stringInfo[1][addrStart:]
